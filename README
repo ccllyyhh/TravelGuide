@@ -1,0 +1,22 @@
+
+###项目代码
+路径：
+    
+    src>main>java>com.caoliyuan.travelGuide
+
++   *Application.java* 主要用于做一些框架配置
++   *domain*目录主要用于实体（Entity）与数据访问层（Repository）
++   *service* 层主要是业务类代码
++   *controller* 负责页面访问控制
+###github提交：
+
+1.  点下面的Version Control
+2.  然后点左边的绿色✔
+3.  然后写一段commit描述
+4.  点击右下角commit右边的三角形，选择commit and push
+
+
+###其他疑问
+chrome浏览器书签收藏的网页中找
+
+####pupu加油！
