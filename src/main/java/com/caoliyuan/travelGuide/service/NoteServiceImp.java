@@ -17,10 +17,6 @@ public class NoteServiceImp implements NoteService{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Override
-    public boolean addNote() {
-        return false;
-    }
 
 
     /*
@@ -33,107 +29,44 @@ public class NoteServiceImp implements NoteService{
 		START_DAY = sTART_DAY;
 		LOCATION = lOCATION;
     * */
+
+
     @Override
     public List<NoteModel> getNotes(int num,String orderby) {
         String sql = "select * from note order by "+orderby+" desc limit ?";
-        return jdbcTemplate.query(sql, new RowMapper<NoteModel>() {
-            @Override
-            public NoteModel mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new NoteModel(
-                        resultSet.getInt("note_id"),
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("title"),
-                        resultSet.getString("cover_url"),
-                        resultSet.getInt("view_num"),
-                        resultSet.getInt("like_num"),
-                        resultSet.getString("start_day"),
-                        resultSet.getString("location")
-                );
-            }
-        }, num);
+        return jdbcTemplate.query(sql,NoteModel.noteMapper, num);
     }
 
     @Override
     public List<NoteModel> searchNotes(String title) {
         String sql = "select * from note where title like '%"+title+"%'";
-        return jdbcTemplate.query(sql, new RowMapper<NoteModel>() {
-            @Override
-            public NoteModel mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new NoteModel(
-                        resultSet.getInt("note_id"),
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("title"),
-                        resultSet.getString("cover_url"),
-                        resultSet.getInt("view_num"),
-                        resultSet.getInt("like_num"),
-                        resultSet.getString("start_day"),
-                        resultSet.getString("location")
-                );
-            }
-        });
+        return jdbcTemplate.query(sql, NoteModel.noteMapper);
     }
 
     @Override
-    public List<NoteItemModel> getNoteDetialById(int noteId) {
+    public List<NoteItemModel> getNoteDetialById(long noteId) {
         String sql = "select * from noteitem where note_id = ? order by note_item_id";
-        return jdbcTemplate.query(sql, new RowMapper<NoteItemModel>() {
-            @Override
-            public NoteItemModel mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new NoteItemModel(
-                        resultSet.getInt("note_item_id"),
-                        resultSet.getInt("note_id"),
-                        resultSet.getInt("day_num"),
-                        resultSet.getString("img_url"),
-                        resultSet.getString("content"),
-                        resultSet.getString("time"),
-                        resultSet.getString("location")
-                );
-            }
-        }, noteId);
+        return jdbcTemplate.query(sql,NoteItemModel.noteItemMapper, noteId);
     }
 
     @Override
-    public NoteModel getNoteByid(int id) {
+    public NoteModel getNoteByid(long id) {
         String sql = "select * from note where note_id = ?";
-        List<NoteModel> result = jdbcTemplate.query(sql, new RowMapper<NoteModel>() {
-            @Override
-            public NoteModel mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new NoteModel(
-                        resultSet.getInt("note_id"),
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("title"),
-                        resultSet.getString("cover_url"),
-                        resultSet.getInt("view_num"),
-                        resultSet.getInt("like_num"),
-                        resultSet.getString("start_day"),
-                        resultSet.getString("location")
-                );
-            }
-        },id);
+        List<NoteModel> result = jdbcTemplate.query(sql, NoteModel.noteMapper, id);
         return result.size()>0?result.get(0):null;
     }
 
     @Override
-    public boolean viewNumPlusByid(int id) {
+    public boolean viewNumPlusByid(long id) {
         String sql = "update note set view_num=view_num+1 where note_id = ?";
         int rows = jdbcTemplate.update(sql,id);
         return rows>0;
     }
 
     @Override
-    public List<CommentModel> getNoteCommentByid(int noteid) {
+    public List<CommentModel> getNoteCommentByid(long noteid) {
         String sql = "select * from comment where note_id = ?";
-        return jdbcTemplate.query(sql, new RowMapper<CommentModel>() {
-            @Override
-            public CommentModel mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new CommentModel(
-                        resultSet.getInt("note_id"),
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("content"),
-                        resultSet.getTimestamp("time").getTime()
-                );
-            }
-        }, noteid);
+        return jdbcTemplate.query(sql,CommentModel.commentMapper, noteid);
     }
 
     @Override
@@ -141,5 +74,48 @@ public class NoteServiceImp implements NoteService{
         String sql = "insert into comment value(NULL,?,?,?,NUll)";
         int rows = jdbcTemplate.update(sql, commentModel.getNoteid(), commentModel.getUserid(),commentModel.getContent());
         return rows>0;
+    }
+
+    @Override
+    public boolean addNote(NoteModel noteModel) {
+        String sql = "insert into note value(?,?,?,?,?,?,?,?,?)";
+        int rows = jdbcTemplate.update(sql,
+                noteModel.getNOTE_ID(),
+                noteModel.getUSER_ID(),
+                noteModel.getTITLE(),
+                noteModel.getCOVER_URL(),
+                noteModel.getVIEW_NUM(),
+                noteModel.getLIKE_NUM(),
+                noteModel.getSTART_DAY(),
+                noteModel.getLOCATION(),
+                noteModel.getCREATETIME());
+        return rows>0;
+    }
+
+    @Override
+    public boolean addNoteItem(NoteItemModel noteItemModel) {
+        String sql = "insert into noteitem value(NULL,?,?,?,?,?,?)";
+        int rows = jdbcTemplate.update(sql,
+                noteItemModel.getNOTE_ID(),
+                noteItemModel.getDAY_NUM(),
+                noteItemModel.getIMG_URL(),
+                noteItemModel.getCONTENT(),
+                noteItemModel.getTIME(),
+                noteItemModel.getLOCATION()
+                );
+        return rows>0;
+    }
+
+    @Override
+    public int getNoteNum() {
+        String sql = "select count(*) from note";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    @Override
+    public boolean deleteNote(long noteid) {
+        String sql = "delete from note where NOTE_ID = ?";
+        int r = jdbcTemplate.update(sql,noteid);
+        return r>0;
     }
 }

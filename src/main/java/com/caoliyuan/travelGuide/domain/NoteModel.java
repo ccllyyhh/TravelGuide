@@ -1,10 +1,16 @@
 package com.caoliyuan.travelGuide.domain;
 
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+
 public class NoteModel {
     /**
      * 日记id
      */
-    private Integer NOTE_ID;
+    private long NOTE_ID;
 
     /**
      * 作者id
@@ -34,46 +40,64 @@ public class NoteModel {
     /**
      * 开始日期
      */
-    private String START_DAY;
+    private Date START_DAY;
 
     /**
      * 地点
      */
     private String LOCATION;
 
+    /*
+    * 添加日期
+    * */
+    private Date CREATETIME;
+
+		public static RowMapper<NoteModel> noteMapper = new RowMapper<NoteModel>() {
+				@Override
+				public NoteModel mapRow(ResultSet resultSet, int i) throws SQLException {
+						return new NoteModel(
+								resultSet.getLong("note_id"),
+								resultSet.getInt("user_id"),
+								resultSet.getString("title"),
+								resultSet.getString("cover_url"),
+								resultSet.getInt("view_num"),
+								resultSet.getInt("like_num"),
+								resultSet.getDate("start_day"),
+								resultSet.getString("location"),
+								resultSet.getDate("create_day")
+						);
+				}
+		};
+
     public NoteModel() {
     	
     }
-    
-    
-    public NoteModel(Integer uSER_ID, String tITLE, String cOVER_URL, String sTART_DAY, String lOCATION) {
-		super();
-		USER_ID = uSER_ID;
-		TITLE = tITLE;
-		COVER_URL = cOVER_URL;
-		START_DAY = sTART_DAY;
-		LOCATION = lOCATION;
-	}
 
+		public NoteModel(long NOTE_ID, Integer USER_ID, String TITLE, String COVER_URL, Integer VIEW_NUM, Integer LIKE_NUM, Date START_DAY, String LOCATION, Date CREATETIME) {
+				this.NOTE_ID = NOTE_ID;
+				this.USER_ID = USER_ID;
+				this.TITLE = TITLE;
+				this.COVER_URL = COVER_URL;
+				this.VIEW_NUM = VIEW_NUM;
+				this.LIKE_NUM = LIKE_NUM;
+				this.START_DAY = START_DAY;
+				this.LOCATION = LOCATION;
+				this.CREATETIME = CREATETIME;
+		}
 
-	public NoteModel(Integer nOTE_ID, Integer uSER_ID, String tITLE, String cOVER_URL, Integer vIEW_NUM,
-			Integer lIKE_NUM, String sTART_DAY, String lOCATION) {
-		super();
-		NOTE_ID = nOTE_ID;
-		USER_ID = uSER_ID;
-		TITLE = tITLE;
-		COVER_URL = cOVER_URL;
-		VIEW_NUM = vIEW_NUM;
-		LIKE_NUM = lIKE_NUM;
-		START_DAY = sTART_DAY;
-		LOCATION = lOCATION;
-	}
+		public Date getCREATETIME() {
+				return CREATETIME;
+		}
 
-	public Integer getNOTE_ID() {
+		public void setCREATETIME(Date CREATETIME) {
+				this.CREATETIME = CREATETIME;
+		}
+
+		public long getNOTE_ID() {
         return NOTE_ID;
     }
 
-    public void setNOTE_ID(Integer NOTE_ID) {
+    public void setNOTE_ID(long NOTE_ID) {
         this.NOTE_ID = NOTE_ID;
     }
 
@@ -117,15 +141,15 @@ public class NoteModel {
         this.LIKE_NUM = LIKE_NUM;
     }
 
-    public String getSTART_DAY() {
-        return START_DAY;
-    }
+		public Date getSTART_DAY() {
+				return START_DAY;
+		}
 
-    public void setSTART_DAY(String START_DAY) {
-        this.START_DAY = START_DAY;
-    }
+		public void setSTART_DAY(Date START_DAY) {
+				this.START_DAY = START_DAY;
+		}
 
-    public String getLOCATION() {
+		public String getLOCATION() {
         return LOCATION;
     }
 
@@ -139,5 +163,6 @@ public class NoteModel {
 				+ COVER_URL + ", VIEW_NUM=" + VIEW_NUM + ", LIKE_NUM=" + LIKE_NUM + ", START_DAY=" + START_DAY
 				+ ", LOCATION=" + LOCATION + "]";
 	}
-    
+
+
 }

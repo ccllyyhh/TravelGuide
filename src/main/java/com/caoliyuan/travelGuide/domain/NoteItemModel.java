@@ -1,5 +1,10 @@
 package com.caoliyuan.travelGuide.domain;
 
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class NoteItemModel {
     /**
      * 日记项id
@@ -9,12 +14,12 @@ public class NoteItemModel {
     /**
      * 日记id
      */
-    private Integer NOTE_ID;
+    private long NOTE_ID;
 
     /**
-     * index
+     * 第几天
      */
-    private Integer COUNT;
+    private Integer DAY_NUM;
 
     /**
      * 图片url
@@ -36,20 +41,27 @@ public class NoteItemModel {
      */
     private String LOCATION;
 
-	public NoteItemModel(Integer NOTE_ITEM_ID, Integer NOTE_ID, Integer COUNT, String IMG_URL, String CONTENT, String TIME, String LOCATION) {
+    public static RowMapper<NoteItemModel> noteItemMapper = new RowMapper<NoteItemModel>() {
+			@Override
+			public NoteItemModel mapRow(ResultSet resultSet, int i) throws SQLException {
+					return new NoteItemModel(
+							resultSet.getInt("note_item_id"),
+							resultSet.getLong("note_id"),
+							resultSet.getInt("day_num"),
+							resultSet.getString("img_url"),
+							resultSet.getString("content"),
+							resultSet.getString("time"),
+							resultSet.getString("location")
+					);
+			}
+	};
+
+
+	public NoteItemModel(Integer NOTE_ITEM_ID, long NOTE_ID, Integer DAY_NUM, String IMG_URL, String CONTENT, String TIME, String LOCATION) {
 
 		this.NOTE_ITEM_ID = NOTE_ITEM_ID;
 		this.NOTE_ID = NOTE_ID;
-		this.COUNT = COUNT;
-		this.IMG_URL = IMG_URL;
-		this.CONTENT = CONTENT;
-		this.TIME = TIME;
-		this.LOCATION = LOCATION;
-	}
-
-	public NoteItemModel(Integer NOTE_ID, Integer COUNT, String IMG_URL, String CONTENT, String TIME, String LOCATION) {
-		this.NOTE_ID = NOTE_ID;
-		this.COUNT = COUNT;
+		this.DAY_NUM = DAY_NUM;
 		this.IMG_URL = IMG_URL;
 		this.CONTENT = CONTENT;
 		this.TIME = TIME;
@@ -66,20 +78,20 @@ public class NoteItemModel {
 		NOTE_ITEM_ID = nOTE_ITEM_ID;
 	}
 
-	public Integer getNOTE_ID() {
+	public long getNOTE_ID() {
 		return NOTE_ID;
 	}
 
-	public void setNOTE_ID(Integer nOTE_ID) {
+	public void setNOTE_ID(long nOTE_ID) {
 		NOTE_ID = nOTE_ID;
 	}
 
-	public Integer getCOUNT() {
-		return COUNT;
+	public Integer getDAY_NUM() {
+		return DAY_NUM;
 	}
 
-	public void setCOUNT(Integer cOUNT) {
-		COUNT = cOUNT;
+	public void setDAY_NUM(Integer DAY_NUM) {
+		DAY_NUM = DAY_NUM;
 	}
 
 	public String getIMG_URL() {

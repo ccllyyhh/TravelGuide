@@ -1,10 +1,15 @@
 package com.caoliyuan.travelGuide.domain;
 
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class CommentModel {
 
     private int commentid;
 
-    private int noteid;
+    private long noteid;
 
     private int userid;
 
@@ -12,7 +17,19 @@ public class CommentModel {
 
     private long time;
 
-    public CommentModel(int noteid, int userid, String content, long time) {
+    public static RowMapper<CommentModel> commentMapper = new RowMapper<CommentModel>() {
+        @Override
+        public CommentModel mapRow(ResultSet resultSet, int i) throws SQLException {
+            return new CommentModel(
+                    resultSet.getLong("note_id"),
+                    resultSet.getInt("user_id"),
+                    resultSet.getString("content"),
+                    resultSet.getTimestamp("create_date").getTime()
+            );
+        }
+    };
+
+    public CommentModel(long noteid, int userid, String content, long time) {
         this.noteid = noteid;
         this.userid = userid;
         this.content = content;
@@ -27,11 +44,11 @@ public class CommentModel {
         this.commentid = commentid;
     }
 
-    public int getNoteid() {
+    public long getNoteid() {
         return noteid;
     }
 
-    public void setNoteid(int noteid) {
+    public void setNoteid(long noteid) {
         this.noteid = noteid;
     }
 
